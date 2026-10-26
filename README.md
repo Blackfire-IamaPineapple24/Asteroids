@@ -1,6 +1,6 @@
 # Asteroids
 
-<img src="Asteroids.png">
+<img src="Asteroids.png" width="300">
 
 We will make a clone of the classic game Asteroids. It should make use of:
 - hierarchal classes
