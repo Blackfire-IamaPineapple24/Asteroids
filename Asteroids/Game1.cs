@@ -148,7 +148,7 @@ namespace Asteroids
             switch (_gameState)
             {
                 case GameState.TitleScreen: DrawTitleScreen(gameTime); break;
-                case GameState.Gameplay: DrawGameplay(gameTime); break;
+                //case GameState.Gameplay: DrawGameplay(gameTime); break;
                 case GameState.Paused: DrawPaused(gameTime); break;
                 case GameState.GameOver: DrawGameOver(gameTime); break;
             }
