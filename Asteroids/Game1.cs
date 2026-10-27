@@ -1,6 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Asteroids
 {
@@ -25,7 +30,10 @@ namespace Asteroids
         public static string _exitPrompt = "press ESC to exit";
 
         public static SpriteFont _mainFont, _titleFont;
+        public static Texture2D _particleTxr, _rocksTxr, _shipTxr;
         public static KeyboardState _keyboardState, _keyboardStatePrevious;
+
+        public static List<Sprite> _spriteList = [];
     }
 
     public class Game1 : Game
@@ -57,6 +65,10 @@ namespace Asteroids
 
             AsteroidsData._mainFont = Content.Load<SpriteFont>("MainFont");
             AsteroidsData._titleFont = Content.Load<SpriteFont>("TitleFont");
+
+            AsteroidsData._particleTxr = Content.Load<Texture2D>("SpriteParticle");
+            AsteroidsData._rocksTxr = Content.Load<Texture2D>("SpriteRocks");
+            AsteroidsData._shipTxr = Content.Load<Texture2D>("SpriteShip");
         }
 
         protected override void Update(GameTime gameTime)
@@ -73,12 +85,21 @@ namespace Asteroids
                 default: StartTitleScreen(); break;
             }
 
+            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
+
             base.Update(gameTime);
         }
 
         protected void StartTitleScreen()
         {
             _gameState = GameState.TitleScreen;
+        }
+
+        protected void NewGame()
+        {
+            StartGameplay();
+            AsteroidsData._spriteList.Clear();
+            AsteroidsData._spriteList.Add(new SpriteShipPlayer());
         }
 
         protected void StartGameplay()
@@ -104,8 +125,10 @@ namespace Asteroids
             }
             else if (AsteroidsData._keyboardState.IsKeyDown(Keys.Space) && !AsteroidsData._keyboardStatePrevious.IsKeyDown(Keys.Space))
             {
-                StartGameplay();
+                NewGame();
             }
+
+            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
         }
 
         protected void UpdateGameplay(GameTime gameTime)
@@ -118,6 +141,8 @@ namespace Asteroids
             {
                 StartGameplay();
             }
+
+            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
         }
 
         protected void UpdatePaused(GameTime gameTime)
@@ -138,6 +163,8 @@ namespace Asteroids
             {
                 StartTitleScreen();
             }
+
+            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
         }
 
         protected override void Draw(GameTime gameTime)
@@ -145,10 +172,13 @@ namespace Asteroids
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
+
+            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.DrawSprite(_spriteBatch));
+
             switch (_gameState)
             {
                 case GameState.TitleScreen: DrawTitleScreen(gameTime); break;
-                //case GameState.Gameplay: DrawGameplay(gameTime); break;
+                case GameState.Gameplay: DrawGameplay(gameTime); break;
                 case GameState.Paused: DrawPaused(gameTime); break;
                 case GameState.GameOver: DrawGameOver(gameTime); break;
             }
@@ -163,13 +193,13 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._title, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._startPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._startPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._startPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._exitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._exitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._exitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Chartreuse);
         }
 
-        protected void DrawGamePlay(GameTime gameTime)
+        protected void DrawGameplay(GameTime gameTime)
         {
 
         }
@@ -180,10 +210,10 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._pausedText, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._resumePrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._resumePrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._resumePrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._quitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Chartreuse);
         }
 
         protected void DrawGameOver(GameTime gameTime)
@@ -192,7 +222,7 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._gameOverText, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._quitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
         }
     }
 }
