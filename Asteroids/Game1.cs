@@ -34,6 +34,8 @@ namespace Asteroids
         public static KeyboardState _keyboardState, _keyboardStatePrevious;
 
         public static List<Sprite> _spriteList = [];
+
+        public static Random _rng = new();
     }
 
     public class Game1 : Game
@@ -85,13 +87,12 @@ namespace Asteroids
                 default: StartTitleScreen(); break;
             }
 
-            AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
-
             base.Update(gameTime);
         }
 
         protected void StartTitleScreen()
         {
+            AsteroidsData._spriteList.Clear();
             _gameState = GameState.TitleScreen;
         }
 
