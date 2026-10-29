@@ -18,11 +18,15 @@ namespace Asteroids
         public SpriteRock(Vector2 location, int size) : base(AsteroidsData._rocksTxr, location, GetSpawnVelocity(), AsteroidsData._rng.NextSingle() * float.Tau)
         {
             _rockSize = size;
+            _sourceBounds = GetSourceBounds(_rockSize);
+            _origin = _sourceBounds.Center.ToVector2();
         }
 
         public SpriteRock() : base(AsteroidsData._rocksTxr, GetSpawnLocation(), GetSpawnVelocity(), AsteroidsData._rng.NextSingle() * float.Tau)
         {
-            _rockSize = 4;
+            _rockSize = AsteroidsData._rng.Next(1, 5);
+            _sourceBounds = GetSourceBounds(_rockSize);
+            _origin = _sourceBounds.Center.ToVector2();
         }
 
         private static Vector2 GetSpawnLocation()
@@ -36,7 +40,19 @@ namespace Asteroids
 
         private static Vector2 GetSpawnVelocity()
         {
-            return new(AsteroidsData._rng.NextSingle() * _rockSpeed, AsteroidsData._rng.NextSingle() * _rockSpeed);
+            float angle = AsteroidsData._rng.NextSingle() * float.Tau;
+            return new Vector2(float.Cos(angle), float.Sin(angle)) * _rockSpeed;
+        }
+
+        private static Rectangle GetSourceBounds(int size)
+        {
+            switch (size)
+            {
+                case 1: return new(244, 216, 40, 40);
+                case 2: return new(256, 128, 80, 80);
+                case 3: return new(256, 0, 128, 128);
+                default: return new(0, 0, 256, 256);
+            }
         }
     }
 }

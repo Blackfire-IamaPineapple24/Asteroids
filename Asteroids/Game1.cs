@@ -94,6 +94,12 @@ namespace Asteroids
         {
             AsteroidsData._spriteList.Clear();
             _gameState = GameState.TitleScreen;
+            AsteroidsData._spriteList.Add(new SpriteRock());
+            AsteroidsData._spriteList.Add(new SpriteRock());
+            AsteroidsData._spriteList.Add(new SpriteRock());
+            AsteroidsData._spriteList.Add(new SpriteRock());
+            AsteroidsData._spriteList.Add(new SpriteRock());
+            AsteroidsData._spriteList.Add(new SpriteRock());
         }
 
         protected void NewGame()
