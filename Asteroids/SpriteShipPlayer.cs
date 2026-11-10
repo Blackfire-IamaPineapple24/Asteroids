@@ -15,11 +15,14 @@ namespace Asteroids
 
         public override void UpdateSprite(GameTime gameTime)
         {
-            _moving = AsteroidsData._keyboardState.IsKeyDown(Keys.W);
+            _moving = AsteroidsData._keyboardState.IsKeyDown(Keys.W) || AsteroidsData._keyboardState.IsKeyDown(Keys.Up);
 
-            if (AsteroidsData._keyboardState.IsKeyDown(Keys.A)) _turning = -1;
-            else if (AsteroidsData._keyboardState.IsKeyDown(Keys.D)) _turning = 1;
+            if (AsteroidsData._keyboardState.IsKeyDown(Keys.A) || AsteroidsData._keyboardState.IsKeyDown(Keys.Left)) _turning = -1;
+            else if (AsteroidsData._keyboardState.IsKeyDown(Keys.D) || AsteroidsData._keyboardState.IsKeyDown(Keys.Right)) _turning = 1;
             else _turning = 0;
+
+            if (AsteroidsData._keyboardState.IsKeyDown(Keys.Space) && !AsteroidsData._keyboardStatePrevious.IsKeyDown(Keys.Space) && !_shooting) _shooting = true;
+            else if (!AsteroidsData._keyboardState.IsKeyDown(Keys.Space) && _shooting) _shooting = false;
 
             base.UpdateSprite(gameTime);
         }

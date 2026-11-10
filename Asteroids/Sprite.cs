@@ -70,5 +70,10 @@ namespace Asteroids
         {
             return new Vector2(float.Cos(_angle), float.Sin(_angle));
         }
+
+        public bool GetIsDead()
+        {
+            return _isDead;
+        }
     }
 }

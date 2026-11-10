@@ -20,7 +20,7 @@ namespace Asteroids
 
     public static class AsteroidsData
     {
-        public static Rectangle _screenBounds = new(0, 0, 1024, 1024);
+        public static Rectangle _screenBounds = new(0, 0, 900, 900);
         public static string _title = "LOOK AT ALL THOSE CHICKENS";
         public static string _pausedText = "PAUSED";
         public static string _gameOverText = "GAME OVER";
@@ -34,7 +34,7 @@ namespace Asteroids
         public static KeyboardState _keyboardState, _keyboardStatePrevious;
 
         public static List<Sprite> _spriteList = [];
-
+        public static List<Sprite> _newSpriteList = [];
         public static Random _rng = new();
 
         public static int _minAsteroidCount = 12;
@@ -56,6 +56,8 @@ namespace Asteroids
 
         protected override void Initialize()
         {
+            Window.Title = "Look at all those chickens!";
+
             _graphics.PreferredBackBufferWidth = AsteroidsData._screenBounds.Width;
             _graphics.PreferredBackBufferHeight = AsteroidsData._screenBounds.Height;
             _graphics.ApplyChanges();
@@ -91,12 +93,20 @@ namespace Asteroids
             }
 
             base.Update(gameTime);
+
+            if (AsteroidsData._newSpriteList.Count > 0)
+            {
+                AsteroidsData._spriteList.AddRange(AsteroidsData._newSpriteList);
+                AsteroidsData._newSpriteList.Clear();
+            }
+
+            AsteroidsData._spriteList.RemoveAll(deadSprite => deadSprite.GetIsDead());
         }
 
         protected void StartTitleScreen()
         {
-            AsteroidsData._spriteList.Clear();
             _gameState = GameState.TitleScreen;
+            AsteroidsData._spriteList.Clear();
             for (int i = 0; i < AsteroidsData._minAsteroidCount; i++) AsteroidsData._spriteList.Add(new SpriteRock());
         }
 
@@ -147,6 +157,8 @@ namespace Asteroids
             {
                 StartGameplay();
             }
+
+            while (AsteroidsData._spriteList.OfType<SpriteRock>().Count() < AsteroidsData._minAsteroidCount) AsteroidsData._spriteList.Add(new SpriteRock());
 
             AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
         }

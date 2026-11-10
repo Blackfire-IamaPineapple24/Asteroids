@@ -13,6 +13,7 @@ namespace Asteroids
     {
         public SpriteParticleThruster(Vector2 location) : base(AsteroidsData._particleTxr, location, null, Color.LightSalmon, 5f, 2f)
         {
+            _canCollide = true;
         }
     }
 }
