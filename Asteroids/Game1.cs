@@ -21,7 +21,7 @@ namespace Asteroids
     public static class AsteroidsData
     {
         public static Rectangle _screenBounds = new(0, 0, 1024, 1024);
-        public static string _title = "ASTEROIDS";
+        public static string _title = "LOOK AT ALL THOSE CHICKENS";
         public static string _pausedText = "PAUSED";
         public static string _gameOverText = "GAME OVER";
         public static string _startPrompt = "press SPACE to start";
@@ -30,12 +30,14 @@ namespace Asteroids
         public static string _exitPrompt = "press ESC to exit";
 
         public static SpriteFont _mainFont, _titleFont;
-        public static Texture2D _particleTxr, _rocksTxr, _shipTxr;
+        public static Texture2D _particleTxr, _rocksTxr, _shipTxr, _background;
         public static KeyboardState _keyboardState, _keyboardStatePrevious;
 
         public static List<Sprite> _spriteList = [];
 
         public static Random _rng = new();
+
+        public static int _minAsteroidCount = 12;
     }
 
     public class Game1 : Game
@@ -68,6 +70,7 @@ namespace Asteroids
             AsteroidsData._mainFont = Content.Load<SpriteFont>("MainFont");
             AsteroidsData._titleFont = Content.Load<SpriteFont>("TitleFont");
 
+            AsteroidsData._background = Content.Load<Texture2D>("Background");
             AsteroidsData._particleTxr = Content.Load<Texture2D>("SpriteParticle");
             AsteroidsData._rocksTxr = Content.Load<Texture2D>("SpriteRocks");
             AsteroidsData._shipTxr = Content.Load<Texture2D>("SpriteShip");
@@ -94,12 +97,7 @@ namespace Asteroids
         {
             AsteroidsData._spriteList.Clear();
             _gameState = GameState.TitleScreen;
-            AsteroidsData._spriteList.Add(new SpriteRock());
-            AsteroidsData._spriteList.Add(new SpriteRock());
-            AsteroidsData._spriteList.Add(new SpriteRock());
-            AsteroidsData._spriteList.Add(new SpriteRock());
-            AsteroidsData._spriteList.Add(new SpriteRock());
-            AsteroidsData._spriteList.Add(new SpriteRock());
+            for (int i = 0; i < AsteroidsData._minAsteroidCount; i++) AsteroidsData._spriteList.Add(new SpriteRock());
         }
 
         protected void NewGame()
@@ -107,6 +105,7 @@ namespace Asteroids
             StartGameplay();
             AsteroidsData._spriteList.Clear();
             AsteroidsData._spriteList.Add(new SpriteShipPlayer());
+            for (int i = 0; i < AsteroidsData._minAsteroidCount; i++) AsteroidsData._spriteList.Add(new SpriteRock());
         }
 
         protected void StartGameplay()
@@ -176,7 +175,7 @@ namespace Asteroids
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.LightBlue);
 
             _spriteBatch.Begin();
 
@@ -200,10 +199,10 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._title, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._startPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._startPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._startPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Black);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._exitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._exitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._exitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Black);
         }
 
         protected void DrawGameplay(GameTime gameTime)
@@ -217,10 +216,10 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._pausedText, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._resumePrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._resumePrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._resumePrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Black);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._quitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 5f / 3f)) - textSize / 2f, Color.Black);
         }
 
         protected void DrawGameOver(GameTime gameTime)
@@ -229,7 +228,7 @@ namespace Asteroids
             _spriteBatch.DrawString(AsteroidsData._titleFont, AsteroidsData._gameOverText, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 2f / 3f)) - textSize / 2f, Color.HotPink);
 
             textSize = AsteroidsData._mainFont.MeasureString(AsteroidsData._quitPrompt);
-            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Chartreuse);
+            _spriteBatch.DrawString(AsteroidsData._mainFont, AsteroidsData._quitPrompt, (AsteroidsData._screenBounds.Center.ToVector2() * new Vector2(1f, 4f / 3f)) - textSize / 2f, Color.Black);
         }
     }
 }
