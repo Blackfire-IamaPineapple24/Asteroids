@@ -15,5 +15,19 @@ namespace Asteroids
         {
             _canCollide = true;
         }
+
+        public override void UpdateSprite(GameTime gameTime)
+        {
+            AsteroidsData._spriteList.OfType<SpriteRock>().ToList().ForEach(eachRock =>
+            {
+                if (IsColliding(eachRock))
+                {
+                    _isDead = true;
+                    eachRock.OnHit();
+                }
+            });
+
+            base.UpdateSprite(gameTime);
+        }
     }
 }

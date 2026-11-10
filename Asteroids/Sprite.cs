@@ -75,5 +75,13 @@ namespace Asteroids
         {
             return _isDead;
         }
+
+        public bool IsColliding(Sprite otherSprite)
+        {
+            if (otherSprite == null || otherSprite == this) return false;
+            if (!_canCollide || !otherSprite._canCollide) return false;
+
+            return Vector2.Distance(_location, otherSprite._location) <= _collisionRadius + otherSprite._collisionRadius;
+        }
     }
 }

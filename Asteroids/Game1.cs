@@ -30,14 +30,14 @@ namespace Asteroids
         public static string _exitPrompt = "press ESC to exit";
 
         public static SpriteFont _mainFont, _titleFont;
-        public static Texture2D _particleTxr, _rocksTxr, _shipTxr, _background;
+        public static Texture2D _particleTxr, _rocksTxr, _shipTxr;
         public static KeyboardState _keyboardState, _keyboardStatePrevious;
 
         public static List<Sprite> _spriteList = [];
         public static List<Sprite> _newSpriteList = [];
         public static Random _rng = new();
 
-        public static int _minAsteroidCount = 12;
+        public static int _minAsteroidCount = 8;
     }
 
     public class Game1 : Game
@@ -72,7 +72,6 @@ namespace Asteroids
             AsteroidsData._mainFont = Content.Load<SpriteFont>("MainFont");
             AsteroidsData._titleFont = Content.Load<SpriteFont>("TitleFont");
 
-            AsteroidsData._background = Content.Load<Texture2D>("Background");
             AsteroidsData._particleTxr = Content.Load<Texture2D>("SpriteParticle");
             AsteroidsData._rocksTxr = Content.Load<Texture2D>("SpriteRocks");
             AsteroidsData._shipTxr = Content.Load<Texture2D>("SpriteShip");
@@ -144,7 +143,11 @@ namespace Asteroids
                 NewGame();
             }
 
+            while (AsteroidsData._spriteList.OfType<SpriteRock>().Count() < AsteroidsData._minAsteroidCount) AsteroidsData._spriteList.Add(new SpriteRock());
+
             AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
+
+            if (AsteroidsData._spriteList.OfType<SpriteShipPlayer>().Any(player => player.GetIsDead())) StartGameOver();
         }
 
         protected void UpdateGameplay(GameTime gameTime)
@@ -161,6 +164,8 @@ namespace Asteroids
             while (AsteroidsData._spriteList.OfType<SpriteRock>().Count() < AsteroidsData._minAsteroidCount) AsteroidsData._spriteList.Add(new SpriteRock());
 
             AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.UpdateSprite(gameTime));
+
+            if (AsteroidsData._spriteList.OfType<SpriteShipPlayer>().Any(player => player.GetIsDead())) StartGameOver();
         }
 
         protected void UpdatePaused(GameTime gameTime)
@@ -192,6 +197,7 @@ namespace Asteroids
             _spriteBatch.Begin();
 
             AsteroidsData._spriteList.ForEach(eachSprite => eachSprite.DrawSprite(_spriteBatch));
+            AsteroidsData._spriteList.OfType<SpriteShip>().ToList().ForEach(eachSprite => eachSprite.DrawSprite(_spriteBatch));
 
             switch (_gameState)
             {

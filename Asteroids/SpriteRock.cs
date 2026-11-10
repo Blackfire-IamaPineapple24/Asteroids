@@ -21,6 +21,7 @@ namespace Asteroids
             _rockSize = size;
             _sourceBounds = GetSourceBounds(_rockSize);
             _origin = _sourceBounds.Size.ToVector2() / 2f;
+            _collisionRadius = _origin.X * 2f / 3f;
             _angularVelocity = (AsteroidsData._rng.NextSingle() * 2f * _rockSpin) - _rockSpin;
         }
 
@@ -29,6 +30,7 @@ namespace Asteroids
             _rockSize = AsteroidsData._rng.Next(1, 5);
             _sourceBounds = GetSourceBounds(_rockSize);
             _origin = _sourceBounds.Size.ToVector2() / 2f;
+            _collisionRadius = _origin.X * 2f / 3f;
             _angularVelocity = (AsteroidsData._rng.NextSingle() * 2f * _rockSpin) - _rockSpin;
         }
 
@@ -56,6 +58,18 @@ namespace Asteroids
                 case 3: return new(256, 0, 128, 128);
                 default: return new(0, 0, 256, 256);
             }
+        }
+
+        public void OnHit()
+        {
+            _isDead = true;
+            if (_rockSize > 1)
+            {
+                AsteroidsData._newSpriteList.Add(new SpriteRock(_location, _rockSize - 1));
+                AsteroidsData._newSpriteList.Add(new SpriteRock(_location, _rockSize - 1));
+            }
+
+            for (int i = 0; i < 4 + _rockSize; i++) AsteroidsData._newSpriteList.Add(new SpriteParticleDebris(_location));
         }
     }
 }

@@ -11,7 +11,10 @@ namespace Asteroids
 {
     public class SpriteShipPlayer : SpriteShip
     {
-        public SpriteShipPlayer() : base(AsteroidsData._screenBounds.Center.ToVector2(), Vector2.Zero, 0f, Color.White) { }
+        public SpriteShipPlayer() : base(AsteroidsData._screenBounds.Center.ToVector2(), Vector2.Zero, 0f, Color.White)
+        {
+            _collisionRadius *= 2f / 3f;
+        }
 
         public override void UpdateSprite(GameTime gameTime)
         {
@@ -23,6 +26,16 @@ namespace Asteroids
 
             if (AsteroidsData._keyboardState.IsKeyDown(Keys.Space) && !AsteroidsData._keyboardStatePrevious.IsKeyDown(Keys.Space) && !_shooting) _shooting = true;
             else if (!AsteroidsData._keyboardState.IsKeyDown(Keys.Space) && _shooting) _shooting = false;
+
+            AsteroidsData._spriteList.OfType<SpriteRock>().ToList().ForEach(eachRock =>
+            {
+                if (IsColliding(eachRock))
+                {
+                    _isDead = true;
+                    eachRock.OnHit();
+                    for (int i = 0; i < 128; i++) AsteroidsData._newSpriteList.Add(new SpriteParticleDebris(_location));
+                }
+            });
 
             base.UpdateSprite(gameTime);
         }
